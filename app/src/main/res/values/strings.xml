@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FoodApp</string>
+    
+    <!-- Login Screen -->
+    <string name="login_title">FoodApp</string>
+    <string name="google_login_button">Continue with Google</string>
+    <string name="facebook_login_button">Continue with Facebook</string>
+    
+    <string name="phone_label">Phone Number</string>
+    <string name="phone_hint">+1 234 567 8900</string>
+    <string name="get_otp_button">Get Code</string>
+    
+    <string name="otp_title">Enter 6-digit code</string>
+    <string name="otp_sent_via">Code sent to your phone via @telegram</string>
+    <string name="confirm_otp_button">Verify Code</string>
+    <string name="change_phone_button">Change phone number</string>
+    
+    <string name="divider_or">or</string>
+    
+    <!-- Error messages -->
+    <string name="error_empty_phone">Please enter phone number</string>
+    <string name="error_invalid_otp">Please enter valid 6-digit OTP</string>
+    <string name="error_invalid_phone">Please enter a valid phone number</string>
+    
+    <!-- Loading and status -->
+    <string name="loading">Loading...</string>
+    <string name="error_generic">Something went wrong. Please try again.</string>
+    
+    <!-- Home Screen -->
+    <string name="home_title">FoodApp</string>
+    <string name="home_welcome">Welcome to FoodApp</string>
+    <string name="home_tagline">You have successfully logged in!</string>
+    <string name="home_description">Your food delivery journey starts here.</string>
+    <string name="logout_button">Logout</string>
+    
+    <!-- Login errors from authentication services -->
+    <string name="error_google_login">Google login failed. Please try again.</string>
+    <string name="error_facebook_login">Facebook login failed. Please try again.</string>
+    <string name="error_otp_verification">Failed to verify OTP. Please try again.</string>
+    <string name="error_otp_send">Failed to send OTP. Please try again.</string>
+</resources>

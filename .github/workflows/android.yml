@@ -1,0 +1,54 @@
+name: Android CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Java 17
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # Step 3: Set up Android SDK (if needed)
+      # This step is optional as typically aietastic wrapper may use SDK defined in gradle.properties
+
+      # Step 4: Grant execute permission on gradlew (for local execution)
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      # Step 5: Cache Gradle dependencies and build files for faster builds
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/*.gradle/**', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      # Step 6: Build the app
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug
+
+      # Step 7: Save the generated APK as an artifact
+      - name: Upload APK as Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 7
+
+      # Optional: You can also upload to Google Play Console here if needed

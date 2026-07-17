@@ -1,0 +1,73 @@
+[versions]
+# Jetpack Compose
+compose-bom = "2024.04.01"
+compose-material3 = "1.2.1"
+compose-navigation = "2.7.6"
+compose-lifecycle-viewmodel = "2.7.4"
+
+# Kotlin Coroutines
+kotlinx-coroutines = "1.7.3"
+
+# Supabase
+postgrest-kt = "2.0.0"
+gotrue-kt = "2.1.0"
+
+# Facebook
+facebook-login = "17.0.1"
+
+# Ktor
+ktor-client = "2.3.7"
+
+# Credential Manager (Google's Credential Manager)
+credential-manager = "1.0.0"
+
+# Optional: Firebase Auth (if used)
+firebase-auth = "22.2.0"
+
+[libraries]
+# Compose BOM
+compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
+compose-ui = { group = "androidx.compose.ui", name = "ui" }
+compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "compose-material3" }
+compose-navigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "compose-navigation" }
+compose-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "compose-lifecycle-viewmodel" }
+compose-livedata = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "compose-lifecycle-viewmodel" }
+
+# Kotlin Coroutines
+coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
+coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
+
+# Supabase
+supabase-gotrue = { group = "io.github.jan-tennert", name = "supabase-gotrue-kt", version.ref = "gotrue-kt" }
+supabase-postgrest = { group = "io.github.jan-tennert", name = "supabase-postgrest-kt", version.ref = "postgrest-kt" }
+
+# Facebook
+facebook-login = { group = "com.facebook.android", name = "facebook-login", version.ref = "facebook-login" }
+
+# Ktor
+ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor-client" }
+ktor-client-cio = { group = "io.ktor", name = "ktor-client-cio", version.ref = "ktor-client" }
+
+# Credential Manager
+credential-manager = { group = "androidx.credentials", name = "credentials", version.ref = "credential-manager" }
+credential-manager-gms = { group = "androidx.credentials", name = "credentials-gms", version.ref = "credential-manager" }
+
+# Firebase Auth (if used)
+firebase-auth = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebase-auth" }
+
+[plugins]
+kotlin-android = { id = "org.jetbrains.kotlin.android", version = "1.9.22" }
+
+[bundles]
+compose = [
+    "compose-bom",
+    "compose-ui",
+    "compose-material3",
+    "compose-navigation",
+    "compose-viewmodel",
+    "compose-livedata"
+]
+coroutines = ["coroutines-android", "coroutines-core"]
+supabase = ["supabase-gotrue", "supabase-postgrest"]
+ktor = ["ktor-client-core", "ktor-client-cio"]
+credential = ["credential-manager", "credential-manager-gms"]
