@@ -20,11 +20,12 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    # Хитрість: генеруємо враппер у порожній папці, щоб Градл не тупив об Android плагіни
+    # Трюк: створюємо порожній settings.gradle, щоб ізолювати генерацію враппера
     - name: Generate Clean Gradle Wrapper
       run: |
         mkdir temp-gradle
         cd temp-gradle
+        echo "" > settings.gradle
         gradle wrapper --gradle-version 8.5
         cd ..
         mkdir -p gradle
