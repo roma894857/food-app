@@ -20,9 +20,16 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    # Замість curl змушуємо GitHub створити правильний wrapper самостійно
-    - name: Generate Gradle Wrapper
-      run: gradle wrapper --gradle-version 8.5
+    # Хитрість: генеруємо враппер у порожній папці, щоб Градл не тупив об Android плагіни
+    - name: Generate Clean Gradle Wrapper
+      run: |
+        mkdir temp-gradle
+        cd temp-gradle
+        gradle wrapper --gradle-version 8.5
+        cd ..
+        mkdir -p gradle
+        cp -r temp-gradle/gradle/wrapper gradle/
+        rm -rf temp-gradle
 
     - name: Make gradlew executable
       run: chmod +x ./gradlew
