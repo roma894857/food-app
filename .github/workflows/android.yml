@@ -20,6 +20,7 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
+    # Генеруємо чистий враппер в ізоляції
     - name: Generate Clean Gradle Wrapper
       run: |
         mkdir temp-gradle
@@ -34,27 +35,14 @@ jobs:
     - name: Make gradlew executable
       run: chmod +x ./gradlew
 
-    # Цей крок автоматично лікує конфігурацію репозиторіїв прямо на сервері
-    - name: Configure Gradle Repositories
+    # Ін'єкція правильних репозиторіїв у твій оригінальний конфіг без його затирання
+    - name: Inject Repositories to Settings
       run: |
-        cat << 'EOF' > settings.gradle
-        pluginManagement {
-            repositories {
-                google()
-                mavenCentral()
-                gradlePluginPortal()
-            }
-        }
-        dependencyResolutionManagement {
-            repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-            repositories {
-                google()
-                mavenCentral()
-            }
-        }
-        rootProject.name = "food-app"
-        include ':app'
-        EOF
+        if [ -f settings.gradle ]; then
+          sed -i '1s/^/pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }\n/' settings.gradle
+        elif [ -f settings.gradle.kts ]; then
+          sed -i '1s/^/pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }\n/' settings.gradle.kts
+        fi
 
     - name: Cache Gradle packages
       uses: actions/cache@v4
