@@ -20,42 +20,31 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    # Генеруємо чистий враппер в ізоляції
-    - name: Generate Clean Gradle Wrapper
-      run: |
-        mkdir temp-gradle
-        cd temp-gradle
-        echo "" > settings.gradle
-        gradle wrapper --gradle-version 8.5
-        cd ..
-        mkdir -p gradle
-        cp -r temp-gradle/gradle/wrapper gradle/
-        rm -rf temp-gradle
-
-    - name: Make gradlew executable
-      run: chmod +x ./gradlew
-
-    # Ін'єкція правильних репозиторіїв у твій оригінальний конфіг без його затирання
-    - name: Inject Repositories to Settings
-      run: |
-        if [ -f settings.gradle ]; then
-          sed -i '1s/^/pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }\n/' settings.gradle
-        elif [ -f settings.gradle.kts ]; then
-          sed -i '1s/^/pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }\n/' settings.gradle.kts
-        fi
-
-    - name: Cache Gradle packages
-      uses: actions/cache@v4
+    # Офіційний плагін, який сам ставить Gradle без потреби у wrapper'і
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v3
       with:
-        path: |
-          ~/.gradle/caches
-          ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-${{ hashFiles('/*.gradle*', '/gradle-wrapper.properties') }}
-        restore-keys: |
-          ${{ runner.os }}-gradle-
+        gradle-version: '8.5'
 
+    - name: Fix Missing Versions and Repositories
+      run: |
+        # 1. Автоматично дописуємо відсутні версії плагінів прямо у код
+        sed -i 's/id("com.android.application")/id("com.android.application") version "8.2.2"/' app/build.gradle.kts
+        sed -i "s/id('com.android.application')/id('com.android.application') version '8.2.2'/" app/build.gradle.kts
+        sed -i 's/id("org.jetbrains.kotlin.android")/id("org.jetbrains.kotlin.android") version "1.9.22"/' app/build.gradle.kts
+        sed -i "s/id('org.jetbrains.kotlin.android')/id('org.jetbrains.kotlin.android') version '1.9.22'/" app/build.gradle.kts
+        
+        # 2. Створюємо ізольований скрипт для репозиторіїв, щоб не ламати твої файли
+        cat << 'EOF' > init.gradle
+        beforeSettings { settings ->
+            settings.pluginManagement.repositories { google(); mavenCentral(); gradlePluginPortal() }
+            settings.dependencyResolutionManagement.repositories { google(); mavenCentral() }
+        }
+        EOF
+
+    # Запускаємо збірку напряму через gradle (а не ./gradlew)
     - name: Build Debug APK
-      run: ./gradlew assembleDebug
+      run: gradle assembleDebug --init-script init.gradle
 
     - name: Upload APK as Artifact
       uses: actions/upload-artifact@v4
