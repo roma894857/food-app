@@ -22,14 +22,15 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      # Ставимо Gradle тієї версії, що вказана в gradle-wrapper.properties.
+      # ./gradlew не використовуємо, бо gradle-wrapper.jar у репозиторії битий.
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
-
-      - name: Make gradlew executable
-        run: chmod +x ./gradlew
+        with:
+          gradle-version: wrapper
 
       - name: Build Debug APK
-        run: ./gradlew assembleDebug --stacktrace
+        run: gradle assembleDebug --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
