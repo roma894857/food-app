@@ -20,11 +20,9 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Download Missing Gradle Wrapper
-      run: |
-        mkdir -p gradle/wrapper
-        curl -L https://github.com/gradle/gradle/raw/v8.5.0/gradle/wrapper/gradle-wrapper.jar -o gradle/wrapper/gradle-wrapper.jar
-        curl -L https://raw.githubusercontent.com/gradle/gradle/v8.5.0/gradle/wrapper/gradle-wrapper.properties -o gradle/wrapper/gradle-wrapper.properties
+    # Замість curl змушуємо GitHub створити правильний wrapper самостійно
+    - name: Generate Gradle Wrapper
+      run: gradle wrapper --gradle-version 8.5
 
     - name: Make gradlew executable
       run: chmod +x ./gradlew
