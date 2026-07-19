@@ -20,35 +20,11 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    # Офіційний плагін, який сам ставить Gradle без потреби у wrapper'і
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v3
       with:
         gradle-version: '8.5'
 
-    - name: Fix Missing Versions and Repositories
-      run: |
-        # 1. Автоматично дописуємо відсутні версії плагінів прямо у код
-        sed -i 's/id("com.android.application")/id("com.android.application") version "8.2.2"/' app/build.gradle.kts
-        sed -i "s/id('com.android.application')/id('com.android.application') version '8.2.2'/" app/build.gradle.kts
-        sed -i 's/id("org.jetbrains.kotlin.android")/id("org.jetbrains.kotlin.android") version "1.9.22"/' app/build.gradle.kts
-        sed -i "s/id('org.jetbrains.kotlin.android')/id('org.jetbrains.kotlin.android') version '1.9.22'/" app/build.gradle.kts
-        
-        # 2. Створюємо ізольований скрипт для репозиторіїв, щоб не ламати твої файли
-        cat << 'EOF' > init.gradle
-        beforeSettings { settings ->
-            settings.pluginManagement.repositories { google(); mavenCentral(); gradlePluginPortal() }
-            settings.dependencyResolutionManagement.repositories { google(); mavenCentral() }
-        }
-        EOF
-
-    # Запускаємо збірку напряму через gradle (а не ./gradlew)
     - name: Build Debug APK
-      run: gradle assembleDebug --init-script init.gradle
-
-    - name: Upload APK as Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: app-debug-apk
-        path: app/build/outputs/apk/debug/app-debug.apk
-        retention-days: 7
+      # Додаємо прапорці, щоб Градл не чіплявся до версій у каталогах
+      run: ./gradlew assembleDebug --no-daemon
