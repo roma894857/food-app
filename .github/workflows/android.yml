@@ -9,18 +9,46 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v4
-    
-    - uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-    
-    - uses: gradle/actions/setup-gradle@v3
+      # 1. Забираємо код
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Build Debug APK
-      run: |
-        chmod +x gradlew
-        ./gradlew assembleDebug --no-daemon
+      # 2. Ставимо Java
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # 3. ВИДАЛЯЄМО БИТИЙ ВРАПЕР ТА ГЕНЕРУЄМО НОВИЙ
+      # Це гарантує, що у нас будуть робочі файли, незалежно від того, що в репо
+      - name: Fix and Regenerate Gradle Wrapper
+        run: |
+          echo "Cleaning up corrupted wrapper files..."
+          rm -rf gradle/wrapper/gradle-wrapper.jar
+          rm -rf gradle/wrapper/gradle-wrapper.properties
+          
+          echo "Generating fresh wrapper..."
+          gradle wrapper --gradle-version 8.5 --distribution-type bin
+          
+          # Перевіряємо чи файл створився
+          if [ ! -f "gradle/wrapper/gradle-wrapper.jar" ]; then
+            echo "Error: Wrapper generation failed!"
+            exit 1
+          fi
+
+      # 4. Даємо права на виконання
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+
+      # 5. Build Debug APK (без демонів, щоб не їсти пам'ять)
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug --no-daemon --stacktrace
+
+      # 6. Зберігаємо результат
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug
+          path: app/build/outputs/apk/debug/app-debug.apk
