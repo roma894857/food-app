@@ -1,14 +1,20 @@
-// Root project settings
-rootProject.name = "FoodApp"
-
-// Configure repositories for the whole project
+pluginManagement {
 repositories {
     google()
     mavenCentral()
     gradlePluginPortal()
 }
-
-// Include the app module
-subprojects {
-    apply plugin: "org.jetbrains.kotlin.android"
 }
+
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.name = "FoodApp"
+
+include(":app")
+
+
